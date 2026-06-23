@@ -1359,7 +1359,7 @@ async function queryCustomAPI(text, isMCQ, isMultipleChoice, config) {
                 break;
                 
             case 'google':
-                const googleModel = modelName || 'gemini-1.5-flash';
+                const googleModel = modelName || 'gemini-2.0-flash';
                 apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${googleModel}:generateContent?key=${apiKey}`;
                 headers = {
                     'Content-Type': 'application/json'
@@ -1379,6 +1379,21 @@ async function queryCustomAPI(text, isMCQ, isMultipleChoice, config) {
                     model: modelName || 'deepseek-chat',
                     messages: [{ role: 'user', content: prompt }],
                     temperature: 0.7
+                };
+                break;
+                
+            case 'openrouter':
+                apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                    'HTTP-Referer': 'https://neopass.tech',
+                    'X-Title': 'NeoPass Extension'
+                };
+                requestBody = {
+                    model: modelName || 'openrouter/auto',
+                    max_tokens: 1024,
+                    messages: [{ role: 'user', content: prompt }]
                 };
                 break;
                 
@@ -1431,6 +1446,7 @@ async function queryCustomAPI(text, isMCQ, isMultipleChoice, config) {
         switch (aiProvider) {
             case 'openai':
             case 'deepseek':
+            case 'openrouter':
                 responseText = data.choices?.[0]?.message?.content;
                 break;
                 
