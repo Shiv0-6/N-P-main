@@ -1397,6 +1397,19 @@ async function queryCustomAPI(text, isMCQ, isMultipleChoice, config) {
                 };
                 break;
                 
+            case 'groq':
+                apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                };
+                requestBody = {
+                    model: modelName || 'llama-3.3-70b-versatile',
+                    messages: [{ role: 'user', content: prompt }],
+                    temperature: 0.7
+                };
+                break;
+                
             case 'custom':
                 if (!customEndpoint) {
                     return {
@@ -1447,6 +1460,7 @@ async function queryCustomAPI(text, isMCQ, isMultipleChoice, config) {
             case 'openai':
             case 'deepseek':
             case 'openrouter':
+            case 'groq':
                 responseText = data.choices?.[0]?.message?.content;
                 break;
                 
