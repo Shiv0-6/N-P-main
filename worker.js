@@ -212,7 +212,11 @@ const getInstalledExtensions = () => {
 setInterval(getInstalledExtensions, 3000);
 
 // Listen for internal messages
-chrome.runtime.onMessage.addListener(handleMessage);
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (!message.instruction) return false;
+    handleMessage(message, sender, sendResponse);
+    return true;
+});
 
 // Version checking functions
 async function checkForUpdate() {
@@ -1339,7 +1343,7 @@ async function queryCustomAPI(text, isMCQ, isMultipleChoice, config) {
                 requestBody = {
                     model: modelName || 'gpt-4o-mini',
                     messages: [{ role: 'user', content: prompt }],
-                    temperature: 0.7
+                    temperature: 1
                 };
                 break;
                 
@@ -1348,8 +1352,7 @@ async function queryCustomAPI(text, isMCQ, isMultipleChoice, config) {
                 headers = {
                     'Content-Type': 'application/json',
                     'x-api-key': apiKey,
-                    'anthropic-version': '2023-06-01',
-                    'anthropic-dangerous-direct-browser-access': 'true'
+                    'anthropic-version': '2023-06-01'
                 };
                 requestBody = {
                     model: modelName || 'claude-3-5-sonnet-20241022',
@@ -1359,7 +1362,7 @@ async function queryCustomAPI(text, isMCQ, isMultipleChoice, config) {
                 break;
                 
             case 'google':
-                const googleModel = modelName || 'gemini-2.0-flash';
+                const googleModel = modelName || 'gemini-3.6-flash';
                 apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${googleModel}:generateContent?key=${apiKey}`;
                 headers = {
                     'Content-Type': 'application/json'
@@ -1377,34 +1380,6 @@ async function queryCustomAPI(text, isMCQ, isMultipleChoice, config) {
                 };
                 requestBody = {
                     model: modelName || 'deepseek-chat',
-                    messages: [{ role: 'user', content: prompt }],
-                    temperature: 0.7
-                };
-                break;
-                
-            case 'openrouter':
-                apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
-                headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`,
-                    'HTTP-Referer': 'https://neopass.tech',
-                    'X-Title': 'NeoPass Extension'
-                };
-                requestBody = {
-                    model: modelName || 'openrouter/auto',
-                    max_tokens: 1024,
-                    messages: [{ role: 'user', content: prompt }]
-                };
-                break;
-                
-            case 'groq':
-                apiUrl = 'https://api.groq.com/openai/v1/chat/completions';
-                headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                };
-                requestBody = {
-                    model: modelName || 'llama-3.3-70b-versatile',
                     messages: [{ role: 'user', content: prompt }],
                     temperature: 0.7
                 };
@@ -1459,8 +1434,6 @@ async function queryCustomAPI(text, isMCQ, isMultipleChoice, config) {
         switch (aiProvider) {
             case 'openai':
             case 'deepseek':
-            case 'openrouter':
-            case 'groq':
                 responseText = data.choices?.[0]?.message?.content;
                 break;
                 

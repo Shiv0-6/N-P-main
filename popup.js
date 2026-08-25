@@ -35,28 +35,33 @@ document.addEventListener('DOMContentLoaded', function () {
         clearTimeout(saveTimeout);
         saveTimeout = setTimeout(async () => {
             // Always get values from settings tab (single source of configuration)
-            const apiKey = document.getElementById('apiKey')?.value?.trim() || '';
-            const aiProvider = document.getElementById('aiProvider')?.value || 'openai';
-            const customEndpoint = document.getElementById('customEndpoint')?.value?.trim() || '';
-            const modelName = document.getElementById('modelName')?.value?.trim() || '';
-            const useCustomAPI = document.getElementById('useCustomAPI')?.checked || false;
+            const apiKey = document.getElementById('apiKey')?.value?.trim();
+            const aiProvider = document.getElementById('aiProvider')?.value;
+            const customEndpoint = document.getElementById('customEndpoint')?.value?.trim();
+            const modelName = document.getElementById('modelName')?.value?.trim();
+            const useCustomAPI = document.getElementById('useCustomAPI')?.checked;
 
-            try {
-                await chrome.storage.local.set({
-                    useCustomAPI: useCustomAPI,
-                    aiProvider: aiProvider,
-                    customEndpoint: customEndpoint,
-                    customAPIKey: apiKey,
-                    customModelName: modelName
-                });
-                console.log('API configuration auto-saved');
-                // Show a subtle success indication
-                if (apiKey) {
+            // Check if user is logged in
+            const { loggedIn } = await chrome.storage.local.get(['loggedIn']);
+            
+            // For non-logged-in users, always require custom API
+            // For logged-in users, save only if toggle is enabled and API key is provided
+            if ((!loggedIn || useCustomAPI) && apiKey) {
+                try {
+                    await chrome.storage.local.set({
+                        useCustomAPI: true,
+                        aiProvider: aiProvider,
+                        customEndpoint: customEndpoint,
+                        customAPIKey: apiKey,
+                        customModelName: modelName
+                    });
+                    console.log('API configuration auto-saved');
+                    // Show a subtle success indication
                     showError('API configuration saved', 1500);
+                } catch (error) {
+                    console.error('Error auto-saving API configuration:', error);
+                    showError('Failed to save API configuration', 2000);
                 }
-            } catch (error) {
-                console.error('Error auto-saving API configuration:', error);
-                showError('Failed to save API configuration', 2000);
             }
         }, 1000); // Save after 1 second of no changes
     }
@@ -88,18 +93,14 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateShortcutsForPlatform() {
         // Define shortcut mappings
         const shortcutMappings = {
-            // Use Control on macOS for these combos, Alt on others
-            'Control + Shift + T': isMac ? 'Control + Shift + T' : 'Alt + Shift + T',
-            'Control + Shift + H': isMac ? 'Control + Shift + H' : 'Alt + Shift + H',
-
-            // Alt-based combos render as Option on macOS
-            'Option + Shift + A': isMac ? 'Option + Shift + A' : 'Alt + Shift + A',
-            'Option + Shift + S': isMac ? 'Option + Shift + S' : 'Alt + Shift + S',
-            'Option + Shift + M': isMac ? 'Option + Shift + M' : 'Alt + Shift + M',
-            'Option + Shift + N': isMac ? 'Option + Shift + N' : 'Alt + Shift + N',
-            'Option + Shift + V': isMac ? 'Option + Shift + V' : 'Alt + Shift + V',
+            'Option + T': isMac ? 'Option + T' : 'Alt + T',
+            'Option + A': isMac ? 'Option + A' : 'Alt + A',
+            'Option + K': isMac ? 'Option + K' : 'Alt + K',
             'Option + C': isMac ? 'Option + C' : 'Alt + C',
-            'Option + O': isMac ? 'Option + O' : 'Alt + O'
+            'Control + Period [.]': isMac ? 'Control + Period [.]' : 'Ctrl + Period [.]',
+            'Control + Comma [,]': isMac ? 'Control + Comma [,]' : 'Ctrl + Comma [,]',
+            'Option + Comma [,]': isMac ? 'Option + Comma [,]' : 'Alt + Comma [,]',
+            'Option + P': isMac ? 'Option + P' : 'Alt + P'
         };
 
         // Update all shortcut keys
@@ -274,13 +275,9 @@ async function fetchAccountInfo() {
 }
 
     function showLoggedOutState() {
-        // Show account info directly, bypassing login form
-        document.getElementById('loginSection').classList.add('hidden');
-        document.getElementById('accountSection').classList.remove('hidden');
-        
-        document.getElementById('accountUsername').textContent = 'Local User (Bypassed)';
-        document.getElementById('accountSubscription').textContent = 'Pro (Unlocked)';
-        document.getElementById('accountTokenUsage').textContent = 'Unlimited (Custom API)';
+        // Show login form in Pro tab
+        document.getElementById('loginSection').classList.remove('hidden');
+        document.getElementById('accountSection').classList.add('hidden');
         
         // Update Custom API UI for non-logged-in users (require custom API)
         const customAPIInfo = document.getElementById('customAPIInfo');
@@ -288,15 +285,15 @@ async function fetchAccountInfo() {
         const useCustomAPIToggle = document.getElementById('useCustomAPI');
         const customAPIForm = document.getElementById('customAPIForm');
         
-        // Show toggle
-        customAPIToggleContainer.classList.remove('hidden');
-        customAPIInfo.textContent = 'Pro Bypass active: You must configure a custom API key for AI features.';
+        // Hide toggle (custom API is mandatory)
+        customAPIToggleContainer.classList.add('hidden');
+        customAPIInfo.textContent = 'Free users must use their own API keys';
         
-        // Always show the API form for bypassed users and force custom API on
+        // Always show the API form for free users and force custom API on
         useCustomAPIToggle.checked = true;
         customAPIForm.classList.remove('hidden');
         
-        // Enable custom API by default for bypassed users
+        // Enable custom API by default for free users
         autoSaveAPIConfig();
     }
 
@@ -577,13 +574,28 @@ async function fetchAccountInfo() {
                 autoSaveAPIConfig();
             } else {
                 customAPIForm.classList.add('hidden');
-                // Save the toggle state as disabled but do not delete API keys
-                autoSaveAPIConfig();
+                // Explicitly remove custom API configuration when toggle is turned off
+                await chrome.storage.local.remove(CUSTOM_API_STORAGE_KEYS);
+                if (aiProviderSelect) {
+                    aiProviderSelect.selectedIndex = 0;
+                }
+                if (customEndpointDiv) {
+                    customEndpointDiv.classList.add('hidden');
+                }
+                if (apiKeyInput) {
+                    apiKeyInput.value = '';
+                }
+                if (customEndpointInput) {
+                    customEndpointInput.value = '';
+                }
+                if (modelNameInput) {
+                    modelNameInput.value = '';
+                }
                 
                 // Clear chat history when disabling custom API
                 clearChatHistoryOnProviderChange();
                 
-                showError('Custom API disabled.', 2000);
+                showError('Custom API disabled. Using default proxy.', 2000);
             }
         });
     }

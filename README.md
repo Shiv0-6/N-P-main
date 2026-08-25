@@ -2,7 +2,13 @@
 
 # <i>**`Free`** NeoPass Extension</i>
 
-> **NeoPass Pro** - [Click here to see Pro features and benefits](https://neopass.tech/pro)
+**NeoPass Pro & NeoBrowser Solver** — Upgrade to a hassle-free experience with NeoPass Pro.
+
+- **`NeoPass Neo Browser Solver`** : Get exclusive access to the Neo Browser Solver: An invisible overlay with the correct option and correct code.
+- **`Managed AI by NeoPass`** : NO API key configuration needed!
+- **`Screenshare Bypass`** : Bypass full-screen restrictions (Share Tab/Window, Blank Screen, or Frozen Screen).
+
+⬇️ [**Click here to get NeoPass Pro and download the NeoPass Neo Browser Solver!**](https://neopass.tech/pro)
 
 This chrome extension is for students taking tests on the **`Iamneo portal`**, **`HackerRank`**, **`Wildlife Ecology NPTEL`**, **`conservation-geography NPTEL`**, **`forest management NPTEL`** and `other exam portals in chrome browser` that restrict your abilities
 
@@ -18,8 +24,8 @@ This chrome extension is for students taking tests on the **`Iamneo portal`**, *
 > **Want a hassle-free experience?** Upgrade to Pro by visiting **neopass.tech/pro** for AI managed by NeoPass (GPT-5.1), increased rate limits, and NeoBrowser with built in Exam Helper access!  
 
 > [!WARNING]
-> **Educational Purposes Only**: This extension is intended for educational purposes. Please use it responsibly and ethically.  
-> We am not responsible for any actions taken, and we do not encourage or promote cheating in any way.  
+> **Educational Purposes Only**: This extension is intended for educational purposes. Please use it responsibly and ethically.
+> We are not responsible for any actions taken, and we do not encourage or promote cheating in any way.  
 > Be cautious when using the extension to maintain academic integrity.
 
 ## ✨ Features
@@ -41,7 +47,7 @@ This chrome extension is for students taking tests on the **`Iamneo portal`**, *
   - **Share Tab/Window** — share only the current tab or window instead of the entire screen
   - **Share Blank Screen** — share a black screen without capturing anything real
   - **Share Frozen Screen** — capture a single frame of your screen and freeze it
-- **`NeoBrowser Access`** : Exclusive access to the NeoBrowser with built in Exam Helper
+- **`NeoBrowser Solver Access`** : Exclusive access to the [NeoBrowser with built in Exam Helper](https://neopass.tech/pro)
 - **`No Network Restrictions`** : Works even if AI providers are blocked on your network
 - **`Increased Rate Limits`** : Higher usage limits for intensive exam sessions
 - **`Priority Support`** : Get help when you need it most
@@ -57,10 +63,7 @@ This chrome extension is for students taking tests on the **`Iamneo portal`**, *
 
 ### Installation Guide Video
 
-
-
-https://github.com/user-attachments/assets/89fb986c-2edb-4252-8232-dbd10beec0cf
-
+https://github.com/user-attachments/assets/eefb46a6-c7d1-4b65-b12b-a0aa674b02d0
 
 ## 💻 Usage
 
@@ -84,32 +87,32 @@ https://github.com/user-attachments/assets/89fb986c-2edb-4252-8232-dbd10beec0cf
 ## ⌨️ Shortcuts
 
 ### Windows/Linux Users:
-- <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>Q</kbd> : Solve Iam Neo MCQs/Coding Questions with 100% ACCURACY
-- <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>A</kbd> : Solve Iam Neo MCQs/Coding Questions with using AI [Backup]
-- <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> : Autotypes Iam Neo Coding Question Solution letter by letter
-- <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>H</kbd> : Solve HackerRank Questions [BETA]
+- <kbd>Alt</kbd> + <kbd>A</kbd> : Search Neo Answers Using AI
+- <kbd>Alt</kbd> + <kbd>T</kbd> : Autotypes Iam Neo Coding Question Solution letter by letter
+- <kbd>Alt</kbd> + <kbd>K</kbd> : Solve HackerRank Questions [BETA]
 > [!NOTE]
 > The following shortcuts **require text to be selected** before activation:  
-> - <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd> : Solve NPTEL MCQs from selected text
-> - <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> : Search answers and code from selected text  
-> - <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd> : Search MCQs from selected text
+> - <kbd>Alt</kbd> + <kbd>Comma [,]</kbd> : Solve NPTEL MCQs from selected text
+> - <kbd>Ctrl</kbd> + <kbd>Period [.]</kbd> : Search answers and code from selected text
+> - <kbd>Ctrl</kbd> + <kbd>Comma [,]</kbd> : Search MCQs from selected text
+- <kbd>Alt</kbd> + <kbd>P</kbd> : Paste using drag and drop when blocked
 - <kbd>Ctrl</kbd> + <kbd>V</kbd> : Paste content when blocked
 - <kbd>Alt</kbd> + <kbd>C</kbd> : Open/Close Chatbot
 
 <details>
 <summary><strong>Mac Users (Click to expand)</strong></summary>
 
-- <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Q</kbd> : Solve Iam Neo MCQs/Coding Questions with 100% ACCURACY
-- <kbd>Option</kbd> + <kbd>Shift</kbd> + <kbd>A</kbd> : Solve Iam Neo MCQs/Coding Questions with using AI [Backup]
-- <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> : Autotypes Iam Neo Coding Question Solution letter by letter
-- <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>H</kbd> : Solve HackerRank Questions [BETA]
+- <kbd>Option</kbd> + <kbd>A</kbd> : Search Neo Answers Using AI
+- <kbd>Option</kbd> + <kbd>T</kbd> : Autotypes Iam Neo Coding Question Solution letter by letter
+- <kbd>Option</kbd> + <kbd>K</kbd> : Solve HackerRank Questions [BETA]
 
 > [!NOTE]
 > The following shortcuts **require text to be selected** before activation:  
-> - <kbd>Option</kbd> + <kbd>Shift</kbd> + <kbd>N</kbd> : Solve NPTEL MCQs from selected text
-> - <kbd>Option</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> : Search answers and code from selected text  
-> - <kbd>Option</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd> : Search MCQs from selected text
+> - <kbd>Option</kbd> + <kbd>Comma [,]</kbd> : Solve NPTEL MCQs from selected text
+> - <kbd>Control</kbd> + <kbd>Period [.]</kbd> : Search answers and code from selected text
+> - <kbd>Control</kbd> + <kbd>Comma [,]</kbd> : Search MCQs from selected text
 
+- <kbd>Option</kbd> + <kbd>P</kbd> : Paste using drag and drop when blocked
 - <kbd>Cmd</kbd> + <kbd>V</kbd> : Paste content when blocked
 - <kbd>Option</kbd> + <kbd>C</kbd> : Open/Close Chatbot
 

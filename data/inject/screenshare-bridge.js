@@ -11,11 +11,11 @@
   const sync = () => chrome.storage.local.get({
     accessToken: '',
     loggedIn: false,
-    isPro: true
+    isPro: false
   }, prefs => {
     port.dataset.npToken = prefs.accessToken || '';
     port.dataset.npLoggedIn = prefs.loggedIn ? 'true' : 'false';
-    port.dataset.npIsPro = 'true';
+    port.dataset.npIsPro = prefs.isPro ? 'true' : 'false';
   });
 
   sync();

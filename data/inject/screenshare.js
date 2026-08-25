@@ -109,7 +109,19 @@ function getNeoPassToken() {
 }
 
 async function validateProAccess() {
-    return true;
+    const token = getNeoPassToken();
+    if (!token) return false;
+    try {
+        const res = await fetch(`${NP_API_BASE}/api/account`, {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) return false;
+        const data = await res.json();
+        return data.success && data.account?.isPro === true;
+    } catch {
+        return false;
+    }
 }
 
 // Function to spoof screen recording behavior
