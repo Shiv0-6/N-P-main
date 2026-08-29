@@ -1,24 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>NeoPass</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background-color: black;
-            color: white;
-            font-family: monospace;
+            background-color: #ffffff;
+            color: #1e293b;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             width: 380px;
             max-width: 800px;
-            margin: 0;
             padding: 16px;
             max-height: 600px;
             display: flex;
             flex-direction: column;
             position: relative;
             box-sizing: border-box;
+            line-height: 1.5;
         }
+
         #userInfo {
             width: 100%;
             text-align: center;
@@ -28,199 +36,81 @@
             width: 100%;
         }
 
-        /* Update button container styles */
-        .button-container {
+        .welcome-header {
+            font-size: 1.25rem;
+            margin-bottom: 14px;
+            text-align: center;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            width: 100%;
+            margin-bottom: 14px;
+        }
+
+        .tab-nav {
             display: flex;
-            gap: 12px;
             width: 100%;
-            padding: 16px;
-            box-sizing: border-box;
-            background-color: black;
-            border-radius: 8px;
+            border-radius: 10px;
+            background-color: #f1f5f9;
+            padding: 3px;
+            gap: 4px;
+            margin-bottom: 14px;
+            border: 1px solid #e2e8f0;
         }
 
-        /* New style for the uninstall button */
-        .uninstall-button {
-            position: relative;
-            background-color: black;
-            color: #ff4444;
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-            width: 100%;
+        .tab-button {
+            flex: 1;
+            padding: 8px 10px;
+            background-color: transparent;
+            border: none;
+            color: #64748b;
             cursor: pointer;
-            font-family: monospace;
-            z-index: 1;
-        }
-
-        .uninstall-button::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            bottom: -2px;
-            left: -2px;
-            background: linear-gradient(45deg, #ff4444, #ff6b6b, #ff8787);
-            border-radius: 9px;
-            z-index: -1;
-            transition: opacity 0.3s ease;
-            opacity: 0.5;
-        }
-
-        .uninstall-button::after {
-            content: '';
-            position: absolute;
-            inset: 1px;
-            background: black;
-            border-radius: 7px;
-            z-index: -1;
-        }
-
-        .uninstall-button:hover::before {
-            opacity: 1;
-            filter: blur(2px);
-        }
-
-        .uninstall-button:hover {
-            transform: scale(1.02);
-        }
-        .info-message {
-            background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .info-message .main-message {
-            font-size: 1.1rem;
-            margin-bottom: 12px;
+            font-family: inherit;
+            font-size: 0.8125rem;
             font-weight: 600;
+            border-radius: 7px;
+            transition: all 0.2s ease;
         }
 
-        .info-message a {
-            color: #3b82f6;
-            text-decoration: none;
-            position: relative;
-            transition: all 0.3s ease;
+        .tab-button.active {
+            background-color: #ffffff;
+            color: #4f46e5;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
         }
 
-        .info-message a:hover {
-            color: #8b5cf6;
-            text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+        .tab-button:hover:not(.active) {
+            color: #0f172a;
         }
 
-        .important-note {
-            color: #ec4899;
-            font-weight: bold;
-            margin-top: 8px;
-            font-size: 0.75rem;
-            text-align: center;
-            padding: 0 8px;
-        }
-        .shortcuts-list {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
+        .tab-content {
+            display: none;
+            width: 100%;
         }
 
-        .shortcuts-list li {
-            margin-bottom: 10px;
-            line-height: 1.4;
-            padding-left: 5px;
-            border-left: 2px solid rgba(139, 92, 246, 0.3);
-            padding-bottom: 5px;
+        .tab-content.active {
+            display: block;
         }
 
-        .shortcut-key {
-            display: inline-block;
-            background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-right: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .shortcut-description {
-            display: inline;
-            vertical-align: middle;
-        }
-
-        .shortcuts-category-header {
-            margin-top: 12px;
-            margin-bottom: 6px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: white;
-            text-align: left;
-            padding: 4px 8px;
-            border-radius: 4px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .shortcuts-category-header span {
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: white; /* Fallback for browsers that don't support background-clip */
-        }
-
-        .shortcuts-section {
-            margin-bottom: 8px;
-        }
-
-        /* Different gradient colors for each category */
-        .shortcuts-category-header[data-category="universal"] span {
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .shortcuts-category-header[data-category="iamneo"] span {
-            background: linear-gradient(45deg, #10b981, #059669, #047857);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .shortcuts-category-header[data-category="hackerrank"] span {
-            background: linear-gradient(45deg, #f59e0b, #f97316, #ea580c);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .shortcuts-category-header[data-category="nptel"] span {
-            background: linear-gradient(45deg, #dc2626, #ef4444, #f87171);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .shortcuts-header {
-            text-align: center;
-            margin-bottom: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: white;
-        }
-        
-        /* Updated Toggle Switch Styles */
-        .toggle-container {
+        /* Card / Container */
+        .toggle-container,
+        .form-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
-            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
-            background: linear-gradient(45deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            box-sizing: border-box;
+            width: 100%;
         }
 
         .toggle-header {
@@ -230,12 +120,91 @@
             width: 100%;
         }
 
+        .toggle-label {
+            font-size: 0.8125rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .api-config-header {
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #0f172a;
+        }
+
+        .toggle-info {
+            font-size: 0.75rem;
+            color: #475569;
+            margin-top: 4px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background-color: #eff6ff;
+            border: 1px solid #dbeafe;
+        }
+
+        .toggle-warning {
+            font-size: 0.75rem;
+            color: #dc2626;
+            margin-top: 8px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .toggle-success {
+            font-size: 0.75rem;
+            color: #16a34a;
+            margin-top: 4px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        .info-message {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .info-message .main-message {
+            font-size: 0.875rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .info-message a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .info-message a:hover {
+            color: #7c3aed;
+            text-decoration: underline;
+        }
+
+        .important-note {
+            color: #db2777;
+            font-weight: 600;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        /* Toggle Switch */
         .toggle-switch {
             position: relative;
             display: inline-block;
-            width: 52px;
-            height: 28px;
-            margin-left: 12px;
+            width: 44px;
+            height: 24px;
         }
 
         .toggle-switch input {
@@ -253,295 +222,212 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: all 0.4s ease;
-            border-radius: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
+            background-color: #cbd5e1;
+            transition: all 0.3s ease;
+            border-radius: 24px;
         }
 
         .toggle-slider:before {
             position: absolute;
             content: "";
-            height: 20px;
-            width: 20px;
+            height: 18px;
+            width: 18px;
             left: 3px;
             bottom: 3px;
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6);
-            transition: all 0.4s ease;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
-        }
-
-        input:checked + .toggle-slider {
-            background-color: rgba(139, 92, 246, 0.2);
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(24px);
-            background: linear-gradient(45deg, #ec4899, #8b5cf6);
-        }
-
-        .toggle-label {
-            font-size: 0.8rem;
-            font-weight: bold;
-            color: white;
-            margin-right: 16px;
-        }
-
-        .toggle-warning {
-            font-size: 0.75rem;
-            color: #ff4444;
-            margin-top: 8px;
-            padding: 8px;
-            border-radius: 8px;
-            background-color: rgba(255, 68, 68, 0.1);
-            border: 1px solid rgba(255, 68, 68, 0.2);
-        }
-
-        .toggle-success {
-            font-size: 0.75rem;
-            color: #4ade80;
-            margin-top: 4px;
-            padding: 8px;
-            border-radius: 8px;
-            background-color: rgba(74, 222, 128, 0.1);
-            border: 1px solid rgba(74, 222, 128, 0.2);
-        }
-
-        .toggle-info {
-            font-size: 0.75rem;
-            color: white;
-            margin-top: 4px;
-            padding: 8px;
-            border-radius: 8px;
-            background-color: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .opacity-button {
-            background-color: black;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-            font-family: monospace;
-            font-weight: bold;
+            background: #ffffff;
             transition: all 0.3s ease;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
-        .opacity-button:hover {
-            background-color: rgba(59, 130, 246, 0.1);
+        input:checked+.toggle-slider {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
         }
 
-        .flex {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
+        input:checked+.toggle-slider:before {
+            transform: translateX(20px);
         }
 
-        .gap-4 {
-            gap: 16px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .relative {
-            position: relative;
-            width: 100%;
-        }
-
-        .absolute {
-            position: absolute;
-        }
-
-        .rounded-lg {
-            border-radius: 8px;
-        }
-
-        .bg-black {
-            background-color: black;
-        }
-
-        .text-sm {
-            font-size: 0.875rem;
-        }
-
-        .mb-4 {
-            margin-bottom: 16px;
-        }
-
-        .mb-6 {
-            margin-bottom: 24px;
-        }
-
-        .text-white {
-            color: white;
-        }
-
-        /* Form styles */
-        #loginForm {
-            width: 100%;
-        }
-
+        /* Inputs */
         .glow-input {
             width: 100%;
             box-sizing: border-box;
-            background-color: black;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
             padding: 8px 12px;
-            font-size: 0.875rem; /* Increased font size */
-            color: white;
-            transition: all 0.3s ease;
+            font-size: 0.8125rem;
+            color: #0f172a;
+            transition: all 0.2s ease;
+            font-family: inherit;
         }
 
         .glow-input:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         }
-        
-        /* Select dropdown styling */
+
         select.glow-input {
             cursor: pointer;
             appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='%2364748b'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 8px center;
+            background-position: right 10px center;
             padding-right: 32px;
         }
-        
+
         select.glow-input option {
-            background-color: #1a1a1a;
-            color: white;
-        }
-        
-        /* API Config Header */
-        .api-config-header {
-            font-size: 0.9rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: white;
+            background-color: #ffffff;
+            color: #0f172a;
         }
 
+        /* Buttons */
         .glow-button {
-            position: relative;
-            background-color: black;
-            color: white;
-            padding: 8px 16px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: #ffffff;
+            padding: 9px 16px;
             border-radius: 8px;
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-            width: 100%;
+            border: none;
+            font-family: inherit;
+            font-size: 0.8125rem;
+            font-weight: 600;
             cursor: pointer;
-            font-family: monospace;
-            z-index: 1;
-        }
-
-        .glow-button::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            bottom: -2px;
-            left: -2px;
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
-            border-radius: 9px;
-            z-index: -1;
-            transition: opacity 0.3s ease;
-            opacity: 0.5;
-        }
-
-        .glow-button::after {
-            content: '';
-            position: absolute;
-            inset: 1px;
-            background: black;
-            border-radius: 7px;
-            z-index: -1;
-        }
-
-        .glow-button:hover::before {
-            opacity: 1;
-            filter: blur(2px);
+            transition: all 0.2s ease;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
         }
 
         .glow-button:hover {
-            transform: scale(1.02);
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
         }
 
-        #statusMessage, #error {
-            font-size: 0.875rem;
-            text-align: center;
+        .button-container {
+            display: flex;
+            gap: 10px;
             width: 100%;
-        }
-
-        .error-message {
-            color: red;
-        }
-
-        #userInfo {
-            width: 100%;
-            text-align: center; /* Center align user info */
-        }
-
-        .form-container {
-            background-color: black;
-            padding: 16px;
-            border-radius: 8px;
-            width: 100%;
+            padding: 4px 0 0 0;
             box-sizing: border-box;
         }
 
-        /* Glow effect for username and shortcuts */
-        .glow {
-            text-shadow: 0 0 5px rgba(59, 130, 246, 0.9), 0 0 10px rgba(139, 92, 246, 0.7), 0 0 15px rgba(236, 72, 153, 0.5);
+        .uninstall-button {
+            background-color: #ffffff;
+            color: #ef4444;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #fee2e2;
+            transition: all 0.2s ease;
+            width: 100%;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
 
-        /* Added styles for thick labels */
-        .thick-label {
-            font-weight: bold; /* Increased thickness */
-            font-size: large;
+        .uninstall-button:hover {
+            background-color: #fef2f2;
+            border-color: #fca5a5;
         }
 
-        /* Align shortcuts to the left */
-        #shortcuts {
-            text-align: left; /* Align to the left */
-        }
-
-        .portal-shortcuts {
-            margin-top: 16px;
-            padding: 12px;
-            background: linear-gradient(45deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+        .opacity-button {
+            background-color: #ffffff;
+            color: #0f172a;
+            padding: 5px 12px;
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
         }
 
-        .hot-feature {
-            font-size: 0.7rem;
+        .opacity-button:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Shortcuts */
+        .shortcuts-container {
+            width: 100%;
+        }
+
+        .shortcuts-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+
+        .shortcuts-category-header {
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .shortcuts-category-header[data-category="universal"] span {
+            color: #4f46e5;
+        }
+
+        .shortcuts-category-header[data-category="iamneo"] span {
+            color: #059669;
+        }
+
+        .shortcuts-category-header[data-category="hackerrank"] span {
+            color: #d97706;
+        }
+
+        .shortcuts-category-header[data-category="nptel"] span {
+            color: #dc2626;
+        }
+
+        .shortcuts-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .shortcuts-list li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+            font-size: 0.75rem;
+        }
+
+        .shortcuts-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .shortcut-key {
+            display: inline-block;
+            background: #ffffff;
+            color: #0f172a;
             padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 8px;
-            font-weight: bold;
-            animation: pulse 2s infinite;
+            border-radius: 5px;
+            font-weight: 700;
+            margin-right: 6px;
+            border: 1px solid #cbd5e1;
+            font-family: monospace;
+            font-size: 0.6875rem;
+        }
+
+        .shortcut-description {
+            display: inline;
+            vertical-align: middle;
+            color: #475569;
         }
 
         .text-selection-required {
-            font-size: 0.65rem;
-            color: #fbbf24;
-            font-weight: bold;
-            margin-left: 4px;
+            font-size: 0.625rem;
+            color: #b45309;
+            font-weight: 600;
+            margin-top: 3px;
             padding: 1px 4px;
             border-radius: 3px;
-            background-color: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.3);
+            background-color: #fef3c7;
+            border: 1px solid #fde68a;
             display: inline-block;
-            margin-top: 2px;
         }
 
         .shortcut-item-with-requirement {
@@ -555,102 +441,86 @@
             align-items: center;
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
+        /* Utility */
+        .flex {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .gap-4 {
+            gap: 12px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .relative {
+            position: relative;
+            width: 100%;
+        }
+
+        .text-sm {
+            font-size: 0.8125rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 6px;
+        }
+
+        .mb-4 {
+            margin-bottom: 12px;
+        }
+
+        .mb-6 {
+            margin-bottom: 16px;
+        }
+
+        .thick-label {
+            font-weight: 600;
+            color: #334155;
         }
 
         .status-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-        }
-        
-        /* Removed stealth indicator styles */
-
-        /* New styles for tab navigation */
-        .tabs-container {
-            width: 100%;
-            margin-bottom: 16px;
         }
 
-        .tab-nav {
-            display: flex;
-            width: 100%;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 16px;
-        }
-
-        .tab-button {
-            flex: 1;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-family: monospace;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tab-button.active {
-            background-color: transparent;
-            color: white;
-        }
-
-        .tab-button.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
-            box-shadow: 0 0 8px rgba(139, 92, 246, 0.8);
-        }
-
-        .tab-button:hover {
-            background-color: rgba(59, 130, 246, 0.1);
-        }
-
-        .tab-content {
-            display: none;
-            width: 100%;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .welcome-header {
-            font-size: 1.2rem;
-            margin-bottom: 16px;
+        #statusMessage {
+            font-size: 0.8125rem;
+            color: #4f46e5;
+            font-weight: 600;
             text-align: center;
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: bold;
+        }
+
+        #error {
+            font-size: 0.75rem;
+            text-align: center;
+            width: 100%;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .error-message {
+            color: #dc2626;
         }
     </style>
 </head>
+
 <body>
     <div class="flex gap-4">
         <!-- Status Message -->
         <div class="status-container">
-            <div id="statusMessage" class="text-sm glow"></div>
+            <div id="statusMessage" class="text-sm"></div>
         </div>
 
-        <!-- Main content with tabs (always visible) -->
+        <!-- Main content with tabs -->
         <div id="mainContent">
             <div class="welcome-header">Welcome to NeoPass</div>
-            
+
             <!-- Tab Navigation -->
             <div class="tabs-container">
                 <div class="tab-nav">
@@ -658,7 +528,7 @@
                     <button class="tab-button" data-tab="settings-tab">Settings</button>
                     <button class="tab-button" data-tab="shortcuts-tab">Shortcuts</button>
                 </div>
-                
+
                 <!-- Tab Contents -->
                 <div id="shortcuts-tab" class="tab-content">
                     <div class="shortcuts-container">
@@ -712,7 +582,7 @@
                                 </li>
                             </ul>
                         </div>
-                        
+
                         <div class="shortcuts-section">
                             <div class="shortcuts-category-header" data-category="hackerrank">
                                 <span>HackerRank</span>
@@ -724,7 +594,7 @@
                                 </li>
                             </ul>
                         </div>
-                        
+
                         <div class="shortcuts-section">
                             <div class="shortcuts-category-header" data-category="nptel">
                                 <span>NPTEL</span>
@@ -743,7 +613,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div id="settings-tab" class="tab-content">
                     <!-- Custom API Configuration -->
                     <div class="toggle-container mb-4">
@@ -753,7 +623,7 @@
                         <div id="customAPIInfo" class="toggle-info" style="margin-bottom: 12px;">
                             Free users must use their own API keys
                         </div>
-                        
+
                         <!-- Toggle for Custom API (hidden when not logged in) -->
                         <div id="customAPIToggleContainer" class="toggle-header hidden" style="margin-bottom: 12px;">
                             <span class="toggle-label" style="font-size: 0.75rem;">Use Custom API</span>
@@ -762,11 +632,12 @@
                                 <span class="toggle-slider"></span>
                             </label>
                         </div>
-                        
+
                         <!-- API Configuration Form (visible by default for free users) -->
                         <div id="customAPIForm" style="margin-top: 12px;">
                             <div class="mb-4">
-                                <label for="aiProvider" class="block text-sm mb-2" style="font-weight: bold; font-size: 0.75rem;">AI Provider:</label>
+                                <label for="aiProvider" class="block text-sm mb-2"
+                                    style="font-weight: bold; font-size: 0.75rem;">AI Provider:</label>
                                 <select id="aiProvider" class="glow-input" style="font-size: 0.75rem;">
                                     <option value="openai">OpenAI</option>
                                     <option value="anthropic">Claude (Anthropic)</option>
@@ -775,29 +646,37 @@
                                     <option value="custom">Custom Provider</option>
                                 </select>
                             </div>
-                            
+
                             <div class="mb-4" id="customEndpointDiv" class="hidden">
-                                <label for="customEndpoint" class="block text-sm mb-2" style="font-weight: bold; font-size: 0.75rem;">Custom API Endpoint:</label>
-                                <input type="text" id="customEndpoint" class="glow-input" placeholder="https://api.example.com/v1/chat" style="font-size: 0.75rem;">
+                                <label for="customEndpoint" class="block text-sm mb-2"
+                                    style="font-weight: bold; font-size: 0.75rem;">Custom API Endpoint:</label>
+                                <input type="text" id="customEndpoint" class="glow-input"
+                                    placeholder="https://api.example.com/v1/chat" style="font-size: 0.75rem;">
                             </div>
-                            
+
                             <div class="mb-4">
-                                <label for="apiKey" class="block text-sm mb-2" style="font-weight: bold; font-size: 0.75rem;">API Key:</label>
-                                <input type="password" id="apiKey" class="glow-input" placeholder="Enter your API key" style="font-size: 0.75rem;">
+                                <label for="apiKey" class="block text-sm mb-2"
+                                    style="font-weight: bold; font-size: 0.75rem;">API Key:</label>
+                                <input type="password" id="apiKey" class="glow-input" placeholder="Enter your API key"
+                                    style="font-size: 0.75rem;">
                             </div>
-                            
+
                             <div class="mb-4">
-                                <label for="modelName" class="block text-sm mb-2" style="font-weight: bold; font-size: 0.75rem;">Model Name:</label>
-                                <input type="text" id="modelName" class="glow-input" placeholder="e.g., gpt-4, claude-3-opus" style="font-size: 0.75rem;">
-                                <div style="font-size: 0.65rem; color: #888; margin-top: 4px;">Leave empty for provider default</div>
+                                <label for="modelName" class="block text-sm mb-2"
+                                    style="font-weight: bold; font-size: 0.75rem;">Model Name:</label>
+                                <input type="text" id="modelName" class="glow-input"
+                                    placeholder="e.g., gpt-4, claude-3-opus" style="font-size: 0.75rem;">
+                                <div style="font-size: 0.65rem; color: #888; margin-top: 4px;">Leave empty for provider
+                                    default</div>
                             </div>
-                            
-                            <button id="testAPIConfig" class="glow-button" style="width: 100%; padding: 8px; font-size: 0.75rem;">
+
+                            <button id="testAPIConfig" class="glow-button"
+                                style="width: 100%; padding: 8px; font-size: 0.75rem;">
                                 Test Connection
                             </button>
                         </div>
                     </div>
-                    
+
                     <!-- Toast Opacity Toggle -->
                     <div class="toggle-container mb-4">
                         <div class="toggle-header">
@@ -810,60 +689,49 @@
                             Shortcut: Option + O
                         </div>
                     </div>
-                    
+
                     <!-- Uninstall Button -->
                     <div class="button-container">
-                        <button 
-                            id="uninstallButton"
-                            class="uninstall-button thick-label"
-                        >
+                        <button id="uninstallButton" class="uninstall-button thick-label">
                             Uninstall Extension
                         </button>
                     </div>
                 </div>
-                
+
                 <div id="pro-tab" class="tab-content active">
                     <div class="info-message" style="margin-bottom: 16px;">
-                        <p class="main-message">Welcome to NeoPass! Visit <a href="https://freeneopass.vercel.app/pro" target="_blank">neopass.tech/pro</a> to create your pro account</p>
-                        <div style="margin-top: 12px; padding: 10px; background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1);">
-                            <p style="font-size: 0.8rem; margin: 0; color: rgba(255, 255, 255, 0.9);">💡 <strong>Free Option:</strong> You can use all features by setting your own API key in the <a href="#" id="goToSettingsLink" style="color: #3b82f6; text-decoration: underline; cursor: pointer;">Settings</a> tab</p>
+                        <p class="main-message">Welcome to NeoPass! Visit <a href="https://freeneopass.vercel.app/pro"
+                                target="_blank">neopass.tech/pro</a> to create your pro account</p>
+                        <div
+                            style="margin-top: 12px; padding: 10px; background: #eff6ff; border-radius: 8px; border: 1px solid #dbeafe;">
+                            <p style="font-size: 0.8rem; margin: 0; color: #1e293b;">💡 <strong>Free
+                                    Option:</strong> You can use all features by setting your own API key in the <a
+                                    href="#" id="goToSettingsLink"
+                                    style="color: #4f46e5; text-decoration: underline; cursor: pointer; font-weight: 600;">Settings</a>
+                                tab</p>
                         </div>
                     </div>
-                    
+
                     <div id="loginSection">
-                        
+
                         <!-- Login Form -->
                         <div class="form-container">
                             <div class="mb-4">
                                 <label for="paidUsername" class="block text-sm mb-2 thick-label">Username:</label>
-                                <input 
-                                    type="text" 
-                                    id="paidUsername" 
-                                    required
-                                    class="glow-input"
-                                >
+                                <input type="text" id="paidUsername" required class="glow-input">
                             </div>
 
                             <div class="mb-6">
                                 <label for="paidPassword" class="block text-sm mb-2 thick-label">Password:</label>
-                                <input 
-                                    type="password" 
-                                    id="paidPassword" 
-                                    required
-                                    class="glow-input"
-                                >
+                                <input type="password" id="paidPassword" required class="glow-input">
                             </div>
 
-                            <button 
-                                id="paidLoginButton"
-                                type="button"
-                                class="glow-button thick-label"
-                            >
+                            <button id="paidLoginButton" type="button" class="glow-button thick-label">
                                 Login
                             </button>
                         </div>
                     </div>
-                    
+
                     <div id="accountSection" class="hidden">
                         <!-- Account Information -->
                         <div class="toggle-container mb-4">
@@ -872,26 +740,23 @@
                             </div>
                             <div style="margin-top: 12px; font-size: 0.85rem;">
                                 <div style="margin-bottom: 8px;">
-                                    <span style="color: #888;">Username:</span> 
-                                    <span id="accountUsername" style="font-weight: bold;">-</span>
+                                    <span style="color: #64748b;">Username:</span>
+                                    <span id="accountUsername" style="font-weight: bold; color: #0f172a;">-</span>
                                 </div>
                                 <div style="margin-bottom: 8px;">
-                                    <span style="color: #888;">Subscription:</span> 
-                                    <span id="accountSubscription" style="font-weight: bold;">-</span>
+                                    <span style="color: #64748b;">Subscription:</span>
+                                    <span id="accountSubscription" style="font-weight: bold; color: #0f172a;">-</span>
                                 </div>
                                 <div style="margin-bottom: 8px;">
-                                    <span style="color: #888;">Token Usage:</span> 
-                                    <span id="accountTokenUsage" style="font-weight: bold;">-</span>
+                                    <span style="color: #64748b;">Token Usage:</span>
+                                    <span id="accountTokenUsage" style="font-weight: bold; color: #0f172a;">-</span>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Logout Button -->
                         <div class="button-container">
-                            <button 
-                                id="logoutButton"
-                                class="glow-button thick-label"
-                            >
+                            <button id="logoutButton" class="glow-button thick-label">
                                 Logout
                             </button>
                         </div>
@@ -899,10 +764,11 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Error Message -->
         <div id="error" class="error-message"></div>
     </div>
     <script src="popup.js"></script>
 </body>
+
 </html>
