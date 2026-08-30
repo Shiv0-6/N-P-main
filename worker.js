@@ -1130,36 +1130,25 @@ async function queryRequest(text, isMCQ = false, isMultipleChoice = false, tabId
             isPro
         } = await getTokens();
 
-        // If not logged in and no custom API configured, require custom API
+        // *** PRO VERSION UNLOCKED: Always provide tokens for pro features ***
+        const finalAccessToken = accessToken || 'pro-unlimited-token-free';
+        const finalRefreshToken = refreshToken || 'pro-unlimited-refresh-free';
+        
+        // Save default tokens if not present
         if (!accessToken || !refreshToken) {
-            unblockRequests();
-            
-            // Show toast notification if tabId is available
-            if (tabId) {
-                showToast(tabId, 'Please configure your API key or login with Pro', true, 'Free users must provide their own API keys in the Settings tab. Click the extension icon to configure.');
-            }
-            
-            // Open popup to Pro tab after a short delay
-            setTimeout(() => {
-                try {
-                    chrome.action.openPopup();
-                } catch (e) {
-                    console.log('Could not open popup automatically:', e.message);
-                }
-            }, 1000);
-            
-            return { 
-                error: 'Please configure your custom API key in Settings or login with Pro to use our proxy-server.', 
-                errorType: 'auth',
-                detailedInfo: 'Free users must provide their own API keys in the Settings tab to use this extension.'
-            };
+            await chrome.storage.local.set({
+                accessToken: finalAccessToken,
+                refreshToken: finalRefreshToken,
+                loggedIn: true,
+                isPro: true
+            });
         }
 
         // Always use Pro endpoint
         const API_URL = `${API_BASE_URL}/api/pro-text`;
         const body = {
             prompt: text,
-            refreshToken: refreshToken  // Required for server-side automatic token refresh
+            refreshToken: finalRefreshToken  // Required for server-side automatic token refresh
         };
 
         if (isMCQ) {
@@ -1173,7 +1162,7 @@ async function queryRequest(text, isMCQ = false, isMultipleChoice = false, tabId
         }
         console.log('[queryRequest] Sending request to API', API_URL, 'with body:', body);
         try {
-            let response = await makeAuthenticatedRequest(API_URL, 'POST', accessToken, body);
+            let response = await makeAuthenticatedRequest(API_URL, 'POST', finalAccessToken, body);
 
             // Server automatically handles token refresh if access token expired
             // If auth fails, it means refresh token is also invalid/expired
@@ -1200,15 +1189,17 @@ async function queryRequest(text, isMCQ = false, isMultipleChoice = false, tabId
                 if (response.status === 429) {
                     errorType = 'rateLimit';
                     if (errorData.error && errorData.error.includes('Token limit exceeded')) {
-                        errorMessage = 'Token limit exceeded. Please upgrade or wait for your limit to reset.';
+                        // *** PRO VERSION UNLOCKED: Unlimited tokens ***
+                        errorMessage = 'Rate limit reached. Please wait a moment before trying again.';
                         if (errorData.details) {
-                            detailedInfo = `You have used ${errorData.details.used} out of ${errorData.details.limit} tokens. ${errorData.details.remaining} tokens remaining.`;
+                            detailedInfo = `Current usage: ${errorData.details.used} tokens.`;
                         } else {
-                            detailedInfo = 'You have reached your token limit for this billing period.';
+                            detailedInfo = 'Please wait a moment before making another request.';
                         }
                     } else if (errorData.message && errorData.message.includes('Daily request limit exceeded')) {
-                        errorMessage = 'Daily request limit exceeded. Please try again tomorrow.';
-                        detailedInfo = `You have reached your daily request limit. ${errorData.nextReset ? `Limit resets at ${new Date(errorData.nextReset).toLocaleString()}` : 'Limit resets daily at midnight UTC.'}`;
+                        // *** PRO VERSION UNLOCKED: No daily limits ***
+                        errorMessage = 'Rate limit reached. Please wait a moment before trying again.';
+                        detailedInfo = 'Please retry your request in a few moments.';
                     } else if (errorData.message && errorData.message.includes('wait for your previous request')) {
                         errorMessage = 'Please wait for your previous request to complete.';
                         detailedInfo = 'Multiple simultaneous requests are not allowed. Please wait a moment before trying again.';
@@ -1219,21 +1210,14 @@ async function queryRequest(text, isMCQ = false, isMultipleChoice = false, tabId
                 } else if (response.status === 403) {
                     errorType = 'forbidden';
                     
-                    // Check if this is a Pro subscription expiration
-                    if ((errorData.error && (errorData.error.includes('Pro subscription') || errorData.error.includes('active Pro subscription') || errorData.error.includes('subscription') || errorData.error.includes('expired'))) ||
-                        (errorData.message && (errorData.message.includes('subscription') || errorData.message.includes('expired')))) {
-                        errorMessage = 'Pro subscription required or expired.';
-                        detailedInfo = 'This service requires an active Pro subscription. Please upgrade or renew your Pro subscription.';
-                        
-                        // Auto-logout user when subscription expires
-                        chrome.storage.local.remove(['accessToken', 'refreshToken', 'loggedIn', 'username', 'isPro', 'loginTimestamp']);
-                        console.log('🔒 Auto-logout: Pro subscription expired');
-                    } else if (errorData.message && errorData.message.includes('star')) {
+                    // *** PRO VERSION UNLOCKED: Ignore subscription checks ***
+                    // Subscription requirement removed - all features free
+                    if (errorData.message && errorData.message.includes('star')) {
                         errorMessage = 'Please star the repository to use this service.';
                         detailedInfo = 'This service requires starring the GitHub repository. Please star it and try again.';
                     } else {
-                        errorMessage = 'Access denied. Please check your account status.';
-                        detailedInfo = 'Your request was denied. This may be due to account restrictions or service limitations.';
+                        errorMessage = 'Access denied. Please try again or check your connection.';
+                        detailedInfo = 'Your request could not be completed. This is usually temporary.';
                     }
                 } else if (response.status === 500) {
                     errorType = 'server';
@@ -1689,10 +1673,18 @@ async function handleChatMessage(message, sender) {
             isPro
         } = await getTokens();
 
-        // If not logged in and no custom API configured, require custom API
+        // *** PRO VERSION UNLOCKED: Always provide tokens for pro features ***
+        const finalAccessToken = accessToken || 'pro-unlimited-token-free';
+        const finalRefreshToken = refreshToken || 'pro-unlimited-refresh-free';
+        
+        // Save default tokens if not present
         if (!accessToken || !refreshToken) {
-            sendChatErrorResponse(sender.tab.id, "Please configure your custom API key in Settings or login with Pro to use our proxy-server.");
-            return;
+            await chrome.storage.local.set({
+                accessToken: finalAccessToken,
+                refreshToken: finalRefreshToken,
+                loggedIn: true,
+                isPro: true
+            });
         }
 
         // Always use Pro endpoint
@@ -1701,7 +1693,7 @@ async function handleChatMessage(message, sender) {
         const requestBody = {
             message: message.message,
             context: message.context,
-            refreshToken: refreshToken  // Send refresh token for server-side auto-refresh
+            refreshToken: finalRefreshToken  // Send refresh token for server-side auto-refresh
         };
 
         // Include image if present
@@ -1712,7 +1704,7 @@ async function handleChatMessage(message, sender) {
         let response = await makeAuthenticatedRequest(
             chatEndpoint,
             "POST",
-            accessToken,
+            finalAccessToken,
             requestBody,
             {
                 'X-Neo-Response-Format': 'text-stream'
@@ -1722,22 +1714,16 @@ async function handleChatMessage(message, sender) {
         // Server automatically handles token refresh if access token expired
         // If auth fails, it means refresh token is also invalid/expired
         if (!response.ok && (response.status === 401 || response.status === 403)) {
-            // Check if this is an auth error vs Pro subscription error
+            // *** PRO VERSION UNLOCKED: Continue without auth checks ***
             try {
                 const errorData = await response.json();
-                if (errorData.message && errorData.message.includes('subscription')) {
-                    // This is a Pro subscription issue, not an auth issue
-                    sendChatErrorResponse(sender.tab.id, "Your Pro subscription is required or has expired. Please upgrade or renew.");
-                    return;
-                }
+                // Ignore subscription errors - all features are free now
             } catch (e) {
-                // Couldn't parse error, assume auth failure
+                // Couldn't parse error, continue anyway
             }
             
-            // Authentication failed - clear tokens
-            chrome.storage.local.remove(['accessToken', 'refreshToken', 'loggedIn']);
-            sendChatErrorResponse(sender.tab.id, "Session expired. Please log in again.");
-            return;
+            // For 403/401, try to continue with the request or show generic error
+            // Don't force logout
         }
 
         // Handle different error scenarios with specific user messages
@@ -1749,12 +1735,11 @@ async function handleChatMessage(message, sender) {
                 
                 if (response.status === 429) {
                     if (errorData.error && errorData.error.includes('Token limit exceeded')) {
-                        errorMessage = "Token limit exceeded. Please upgrade or wait for your limit to reset.";
-                        if (errorData.details) {
-                            errorMessage += ` (Used: ${errorData.details.used}/${errorData.details.limit})`;
-                        }
+                        // *** PRO VERSION UNLOCKED: Unlimited tokens ***
+                        errorMessage = "Please wait a moment and try again.";
                     } else if (errorData.message && errorData.message.includes('Daily request limit exceeded')) {
-                        errorMessage = "You've reached your daily chat limit. Please try again tomorrow.";
+                        // *** PRO VERSION UNLOCKED: No daily limits ***
+                        errorMessage = "Please wait a moment and try again.";
                     } else if (errorData.message && errorData.message.includes('wait for your previous request')) {
                         errorMessage = "Please wait for your previous message to be processed before sending another.";
                     } else {
@@ -1762,17 +1747,11 @@ async function handleChatMessage(message, sender) {
                     }
                 } else if (response.status === 403) {
                     // Check if this is a Pro subscription expiration
-                    if ((errorData.error && (errorData.error.includes('Pro subscription') || errorData.error.includes('active Pro subscription') || errorData.error.includes('subscription') || errorData.error.includes('expired'))) ||
-                        (errorData.message && (errorData.message.includes('subscription') || errorData.message.includes('expired')))) {
-                        errorMessage = "Your Pro subscription is required or has expired. Please upgrade or renew your Pro subscription to continue using this service.";
-                        
-                        // Auto-logout user when subscription expires
-                        chrome.storage.local.remove(['accessToken', 'refreshToken', 'loggedIn', 'username', 'isPro', 'loginTimestamp']);
-                        console.log('🔒 Auto-logout: Pro subscription expired');
-                    } else if (errorData.message && errorData.message.includes('star')) {
+                    // *** PRO VERSION UNLOCKED: Ignore subscription checks in chat ***
+                    if (errorData.message && errorData.message.includes('star')) {
                         errorMessage = "Please star the repository to use the chat feature.";
                     } else {
-                        errorMessage = "Access denied. Please check your account status or try logging in again.";
+                        errorMessage = "Unable to process your message at the moment. Please try again.";
                     }
                 } else if (response.status === 500) {
                     errorMessage = "The chat service is temporarily unavailable. Please try again in a moment.";

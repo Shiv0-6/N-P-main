@@ -524,8 +524,7 @@
             <!-- Tab Navigation -->
             <div class="tabs-container">
                 <div class="tab-nav">
-                    <button class="tab-button active" data-tab="pro-tab">Pro</button>
-                    <button class="tab-button" data-tab="settings-tab">Settings</button>
+                    <button class="tab-button active" data-tab="settings-tab">Settings</button>
                     <button class="tab-button" data-tab="shortcuts-tab">Shortcuts</button>
                 </div>
 
@@ -573,7 +572,7 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <span class="shortcut-key">Option + C</span>
+                                    <span class="shortcut-key" id="chatShortcut">Option + C</span>
                                     <span class="shortcut-description">Toggle Chatbot Overlay</span>
                                 </li>
                                 <li>
@@ -614,7 +613,7 @@
                     </div>
                 </div>
 
-                <div id="settings-tab" class="tab-content">
+                <div id="settings-tab" class="tab-content active">
                     <!-- Custom API Configuration -->
                     <div class="toggle-container mb-4">
                         <div class="api-config-header">
@@ -695,71 +694,6 @@
                         <button id="uninstallButton" class="uninstall-button thick-label">
                             Uninstall Extension
                         </button>
-                    </div>
-                </div>
-
-                <div id="pro-tab" class="tab-content active">
-                    <div class="info-message" style="margin-bottom: 16px;">
-                        <p class="main-message">Welcome to NeoPass! Visit <a href="https://freeneopass.vercel.app/pro"
-                                target="_blank">neopass.tech/pro</a> to create your pro account</p>
-                        <div
-                            style="margin-top: 12px; padding: 10px; background: #eff6ff; border-radius: 8px; border: 1px solid #dbeafe;">
-                            <p style="font-size: 0.8rem; margin: 0; color: #1e293b;">💡 <strong>Free
-                                    Option:</strong> You can use all features by setting your own API key in the <a
-                                    href="#" id="goToSettingsLink"
-                                    style="color: #4f46e5; text-decoration: underline; cursor: pointer; font-weight: 600;">Settings</a>
-                                tab</p>
-                        </div>
-                    </div>
-
-                    <div id="loginSection">
-
-                        <!-- Login Form -->
-                        <div class="form-container">
-                            <div class="mb-4">
-                                <label for="paidUsername" class="block text-sm mb-2 thick-label">Username:</label>
-                                <input type="text" id="paidUsername" required class="glow-input">
-                            </div>
-
-                            <div class="mb-6">
-                                <label for="paidPassword" class="block text-sm mb-2 thick-label">Password:</label>
-                                <input type="password" id="paidPassword" required class="glow-input">
-                            </div>
-
-                            <button id="paidLoginButton" type="button" class="glow-button thick-label">
-                                Login
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="accountSection" class="hidden">
-                        <!-- Account Information -->
-                        <div class="toggle-container mb-4">
-                            <div class="api-config-header">
-                                <span class="toggle-label">Account Information</span>
-                            </div>
-                            <div style="margin-top: 12px; font-size: 0.85rem;">
-                                <div style="margin-bottom: 8px;">
-                                    <span style="color: #64748b;">Username:</span>
-                                    <span id="accountUsername" style="font-weight: bold; color: #0f172a;">-</span>
-                                </div>
-                                <div style="margin-bottom: 8px;">
-                                    <span style="color: #64748b;">Subscription:</span>
-                                    <span id="accountSubscription" style="font-weight: bold; color: #0f172a;">-</span>
-                                </div>
-                                <div style="margin-bottom: 8px;">
-                                    <span style="color: #64748b;">Token Usage:</span>
-                                    <span id="accountTokenUsage" style="font-weight: bold; color: #0f172a;">-</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Logout Button -->
-                        <div class="button-container">
-                            <button id="logoutButton" class="glow-button thick-label">
-                                Logout
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
