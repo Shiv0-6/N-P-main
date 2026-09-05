@@ -169,21 +169,21 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             padding: 1px;
-            background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
-            border-radius: 8px;
+            background: #d1d5db;
+            border-radius: 6px;
             z-index: 2147483647;
             animation: fadeIn 0.3s ease-in;
         }
         .np-toast {
             position: relative;
-            background-color: rgba(0, 0, 0, 0.88);
-            backdrop-filter: blur(12px);
-            color: #ffffff;
+            background-color: #ffffff;
+            color: #1f2937;
             padding: 20px;
-            border-radius: 7px;
+            border-radius: 5px;
             min-width: min(560px, calc(100vw - 32px));
             max-width: calc(100vw - 24px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
         }
         .np-header {
             display: flex;
@@ -191,27 +191,24 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
             align-items: center;
             margin-bottom: 12px;
             padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid #e5e7eb;
         }
         .np-title {
             font-size: 16px;
             font-weight: bold;
-            background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #111827;
         }
         .np-close {
             cursor: pointer;
             font-size: 20px;
-            color: rgba(255, 255, 255, 0.8);
+            color: #6b7280;
             line-height: 1;
             padding: 4px 8px;
             background: none;
             border: none;
             transition: color 0.2s;
         }
-        .np-close:hover { color: #ffffff; }
+        .np-close:hover { color: #111827; }
         .np-status {
             text-align: justify;
             color: #10B981;
@@ -220,16 +217,15 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
         }
         .np-info {
             margin-bottom: 20px;
-            color: #E5E7EB;
+            color: #4b5563;
             padding: 15px;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 5px;
             font-size: 14px;
             line-height: 1.4;
         }
-        .np-info .hl { color: #34D399; font-weight: bold; }
+        .np-info .hl { color: #2563eb; font-weight: bold; }
         .np-btn-row {
             display: flex;
             flex-direction: row;
@@ -254,9 +250,7 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
             z-index: 0;
         }
         .np-btn-wrap:hover .np-glow { opacity: 1; }
-        .np-glow-orange { background: linear-gradient(to right, #f97316, #ef4444); }
-        .np-glow-green  { background: linear-gradient(to right, #22c55e, #10b981); }
-        .np-glow-purple { background: linear-gradient(to right, #3b82f6, #a855f7, #ec4899); }
+        .np-glow-orange, .np-glow-green, .np-glow-purple { background: #d1d5db; }
         .np-btn {
             position: relative;
             z-index: 10;
@@ -267,10 +261,10 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
             min-height: 40px;
             padding: 0 8px;
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #d1d5db;
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            background: #000000;
-            color: #ffffff;
+            background: #ffffff;
+            color: #111827;
             font-size: 12px;
             font-weight: 500;
             cursor: pointer;
@@ -283,18 +277,18 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
             transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         .np-btn:hover {
-            background: #ffffff;
-            color: #000000;
-            border-color: rgba(0, 0, 0, 0.12);
+            background: #f3f4f6;
+            color: #111827;
+            border-color: #9ca3af;
         }
         .np-auth-toast {
             display: none;
             margin-top: 14px;
             padding: 10px 14px;
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 8px;
-            color: #fca5a5;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 5px;
+            color: #b91c1c;
             font-size: 13px;
             text-align: center;
             animation: fadeIn 0.2s ease-in;
@@ -309,18 +303,18 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
             width: 100%;
             padding: 10px 0;
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            background: transparent;
-            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            color: #4b5563;
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.2s, color 0.2s, border-color 0.2s;
         }
         .np-proceed-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: rgba(255, 255, 255, 0.9);
-            border-color: rgba(255, 255, 255, 0.3);
+            background: #f3f4f6;
+            color: #111827;
+            border-color: #9ca3af;
         }
     `;
     shadow.appendChild(styles);
@@ -353,7 +347,7 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
                     <button type="button" class="np-btn freeze-btn">Share Frozen Screen</button>
                 </div>
             </div>
-            <div class="np-auth-toast">This feature requires <strong>NeoPass Pro</strong>. Please login via the extension popup.</div>
+            <div class="np-auth-toast">Authorization is required for this screen-share mode.</div>
             <div class="np-proceed-wrap">
                 <button type="button" class="np-proceed-btn">Proceed without bypass →</button>
             </div>
