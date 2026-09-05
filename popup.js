@@ -34,12 +34,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const modelName = document.getElementById('modelName')?.value?.trim();
             const useCustomAPI = document.getElementById('useCustomAPI')?.checked;
 
-            // Check if user is logged in
-            const { loggedIn } = await chrome.storage.local.get(['loggedIn']);
-            
-            // For non-logged-in users, always require custom API
-            // For logged-in users, save only if toggle is enabled and API key is provided
-            if ((!loggedIn || useCustomAPI) && apiKey) {
+            // Save a provider configuration whenever an API key is present.
+            if (apiKey) {
                 try {
                     await chrome.storage.local.set({
                         useCustomAPI: true,
@@ -176,21 +172,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // No logout functionality needed
 
-    // Initialize extension on popup open
-    // *** PRO VERSION UNLOCKED: All features now free, no login needed ***
+    // Initialize extension on popup open without creating fake credentials.
     chrome.storage.local.get(['accessToken', 'refreshToken'], function (data) {
-        // Ensure pro tokens are always available
-        if (!data.accessToken || !data.refreshToken) {
-            chrome.storage.local.set({
-                loggedIn: true,
-                isPro: true,
-                username: 'NeoPass Pro User',
-                accessToken: 'pro-unlimited-token-free',
-                refreshToken: 'pro-unlimited-refresh-free'
-            });
+        if (data.accessToken === 'pro-unlimited-token-free' ||
+            data.refreshToken === 'pro-unlimited-refresh-free') {
+            chrome.storage.local.remove(['accessToken', 'refreshToken', 'loggedIn', 'isPro', 'username']);
         }
-        
-        // Initialize UI
+
         initializeUI();
         loadAPIConfiguration();
         initializeOpacityLevel();

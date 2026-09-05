@@ -1130,19 +1130,17 @@ async function queryRequest(text, isMCQ = false, isMultipleChoice = false, tabId
             isPro
         } = await getTokens();
 
-        // *** PRO VERSION UNLOCKED: Always provide tokens for pro features ***
-        const finalAccessToken = accessToken || 'pro-unlimited-token-free';
-        const finalRefreshToken = refreshToken || 'pro-unlimited-refresh-free';
-        
-        // Save default tokens if not present
         if (!accessToken || !refreshToken) {
-            await chrome.storage.local.set({
-                accessToken: finalAccessToken,
-                refreshToken: finalRefreshToken,
-                loggedIn: true,
-                isPro: true
-            });
+            unblockRequests();
+            return {
+                error: 'AI service is not configured. Add a provider API key in Settings.',
+                errorType: 'auth',
+                detailedInfo: 'Configure a provider API key in the Settings tab, or sign in with a valid service account.'
+            };
         }
+
+        const finalAccessToken = accessToken;
+        const finalRefreshToken = refreshToken;
 
         // Always use Pro endpoint
         const API_URL = `${API_BASE_URL}/api/pro-text`;
@@ -1463,7 +1461,12 @@ const API_BASE_URL = 'https://api.neopass.tech';
 // Helper function to get tokens from chrome storage
 async function getTokens() {
     return new Promise((resolve) => {
-        chrome.storage.local.get(['accessToken', 'refreshToken', 'isPro'], resolve);
+        chrome.storage.local.get(['accessToken', 'refreshToken', 'isPro'], (tokens) => {
+            const isPlaceholder = tokens.accessToken === 'pro-unlimited-token-free' ||
+                tokens.refreshToken === 'pro-unlimited-refresh-free';
+
+            resolve(isPlaceholder ? { isPro: false } : tokens);
+        });
     });
 }
 
@@ -1714,16 +1717,20 @@ async function handleChatMessage(message, sender) {
         // Server automatically handles token refresh if access token expired
         // If auth fails, it means refresh token is also invalid/expired
         if (!response.ok && (response.status === 401 || response.status === 403)) {
-            // *** PRO VERSION UNLOCKED: Continue without auth checks ***
             try {
                 const errorData = await response.json();
-                // Ignore subscription errors - all features are free now
+                if (response.status === 401) {
+                    sendChatErrorResponse(sender.tab.id, 'The chat session is invalid. Configure a provider API key in Settings.');
+                    return;
+                }
+                if (response.status === 403) {
+                    sendChatErrorResponse(sender.tab.id, errorData.message || 'The chat service denied this request.');
+                    return;
+                }
             } catch (e) {
-                // Couldn't parse error, continue anyway
+                sendChatErrorResponse(sender.tab.id, `Chat service rejected the request (${response.status}).`);
+                return;
             }
-            
-            // For 403/401, try to continue with the request or show generic error
-            // Don't force logout
         }
 
         // Handle different error scenarios with specific user messages
