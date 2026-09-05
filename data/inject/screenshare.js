@@ -101,28 +101,7 @@ function bypassRestrictions() {
     });
 }
 
-const NP_API_BASE = 'https://api.neopass.tech';
-
-function getNeoPassToken() {
-    const port = document.getElementById('np-ss-auth-port');
-    return port?.dataset?.npToken || '';
-}
-
-async function validateProAccess() {
-    const token = getNeoPassToken();
-    if (!token) return false;
-    try {
-        const res = await fetch(`${NP_API_BASE}/api/account`, {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) return false;
-        const data = await res.json();
-        return data.success && data.account?.isPro === true;
-    } catch {
-        return false;
-    }
-}
+// All features unlocked — no API / auth checks needed
 
 // Function to spoof screen recording behavior
 function spoofScreenRecording() {
@@ -347,38 +326,16 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
                     <button type="button" class="np-btn freeze-btn">Share Frozen Screen</button>
                 </div>
             </div>
-            <div class="np-auth-toast">Authorization is required for this screen-share mode.</div>
-            <div class="np-proceed-wrap">
-                <button type="button" class="np-proceed-btn">Proceed without bypass →</button>
-            </div>
         </div>
     `;
     shadow.appendChild(root);
 
-    const authToast = root.querySelector('.np-auth-toast');
-    const proceedWrap = root.querySelector('.np-proceed-wrap');
-
-    function showAuthWall() {
-        authToast.classList.add('visible');
-        proceedWrap.classList.add('visible');
-        const port = document.getElementById('np-ss-auth-port');
-        if (port) port.dataset.npOpenLogin = 'true';
-    }
-
-    async function requirePro(action) {
-        const valid = await validateProAccess();
-        if (valid) {
-            action();
-        } else {
-            showAuthWall();
-        }
-    }
 
     const closeBtn = root.querySelector('.np-close');
     const okBtn = root.querySelector('.ok-btn');
     const blankBtn = root.querySelector('.blank-btn');
     const freezeBtn = root.querySelector('.freeze-btn');
-    const proceedBtn = root.querySelector('.np-proceed-btn');
+
 
     const cleanup = () => {
         root.style.animation = 'fadeOut 0.3s ease-out';
@@ -390,17 +347,8 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
         reject(new Error('Screen share cancelled by user'));
     };
 
-    proceedBtn.onclick = async () => {
-        cleanup();
-        try {
-            const stream = await originalGetDisplayMedia.call(navigator.mediaDevices, constraints);
-            resolve(stream);
-        } catch (error) {
-            reject(error);
-        }
-    };
 
-    okBtn.onclick = () => requirePro(async () => {
+    okBtn.onclick = async () => {
         cleanup();
         try {
             if (isMac) {
@@ -435,9 +383,9 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
         } catch (error) {
             reject(error);
         }
-    });
+    };
 
-    blankBtn.onclick = () => requirePro(() => {
+    blankBtn.onclick = () => {
         cleanup();
         try {
             const canvas = document.createElement('canvas');
@@ -469,9 +417,9 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
         } catch (error) {
             reject(error);
         }
-    });
+    };
 
-    freezeBtn.onclick = () => requirePro(async () => {
+    freezeBtn.onclick = async () => {
         cleanup();
         const chatElements = [
             document.getElementById('chat-overlay-shadow-host'),
@@ -535,7 +483,7 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
             chatElements.forEach(el => el.style.display = '');
             reject(error);
         }
-    });
+    };
 }
 
 // Initialize bypasses and observer
