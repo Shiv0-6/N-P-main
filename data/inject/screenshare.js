@@ -127,229 +127,266 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
 
     const shadow = host.attachShadow({ mode: 'closed' });
 
+    const origin = location.origin;
+
     const styles = document.createElement('style');
     styles.textContent = `
         *, *::before, *::after {
             margin: 0; padding: 0; box-sizing: border-box;
-            font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.5;
             -webkit-text-fill-color: currentColor;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translate(-50%, -45%); }
-            to   { opacity: 1; transform: translate(-50%, -50%); }
+            from { opacity: 0; }
+            to   { opacity: 1; }
         }
         @keyframes fadeOut {
-            from { opacity: 1; transform: translate(-50%, -50%); }
-            to   { opacity: 0; transform: translate(-50%, -45%); }
+            from { opacity: 1; }
+            to   { opacity: 0; }
+        }
+        .np-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2147483646;
+            animation: fadeIn 0.15s ease;
         }
         .np-root {
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            padding: 1px;
-            background: #d1d5db;
-            border-radius: 6px;
             z-index: 2147483647;
-            animation: fadeIn 0.3s ease-in;
+            animation: fadeIn 0.15s ease;
         }
-        .np-toast {
-            position: relative;
-            background-color: #ffffff;
-            color: #1f2937;
-            padding: 20px;
-            border-radius: 5px;
-            min-width: min(560px, calc(100vw - 32px));
-            max-width: calc(100vw - 24px);
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
-        }
-        .np-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .np-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #111827;
-        }
-        .np-close {
-            cursor: pointer;
-            font-size: 20px;
-            color: #6b7280;
-            line-height: 1;
-            padding: 4px 8px;
-            background: none;
-            border: none;
-            transition: color 0.2s;
-        }
-        .np-close:hover { color: #111827; }
-        .np-status {
-            text-align: justify;
-            color: #10B981;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .np-info {
-            margin-bottom: 20px;
-            color: #4b5563;
-            padding: 15px;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 5px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-        .np-info .hl { color: #2563eb; font-weight: bold; }
-        .np-btn-row {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            align-items: stretch;
-            gap: 10px;
-            width: 100%;
-        }
-        .np-btn-wrap {
-            position: relative;
-            flex: 1 1 0;
-            min-width: 0;
-        }
-        .np-glow {
-            position: absolute;
-            inset: -2px;
+        .np-dialog {
+            background: #fff;
             border-radius: 8px;
-            filter: blur(8px);
-            opacity: 0.75;
-            transition: opacity 0.2s ease;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .np-btn-wrap:hover .np-glow { opacity: 1; }
-        .np-glow-orange, .np-glow-green, .np-glow-purple { background: #d1d5db; }
-        .np-btn {
-            position: relative;
-            z-index: 10;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            min-height: 40px;
-            padding: 0 8px;
-            border-radius: 6px;
-            border: 1px solid #d1d5db;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            background: #ffffff;
-            color: #111827;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            white-space: nowrap;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.24), 0 0 0 1px rgba(0,0,0,0.08);
+            width: 420px;
+            max-width: calc(100vw - 32px);
             overflow: hidden;
-            text-overflow: ellipsis;
-            text-decoration: none;
-            letter-spacing: normal;
-            text-transform: none;
-            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
-        .np-btn:hover {
-            background: #f3f4f6;
-            color: #111827;
-            border-color: #9ca3af;
+        .np-dialog-header {
+            padding: 20px 20px 0;
         }
-        .np-auth-toast {
-            display: none;
-            margin-top: 14px;
-            padding: 10px 14px;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 5px;
-            color: #b91c1c;
+        .np-dialog-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #202124;
+            margin-bottom: 4px;
+        }
+        .np-dialog-origin {
             font-size: 13px;
-            text-align: center;
-            animation: fadeIn 0.2s ease-in;
+            color: #5f6368;
+            margin-bottom: 16px;
+            word-break: break-all;
         }
-        .np-auth-toast.visible { display: block; }
-        .np-proceed-wrap {
-            display: none;
-            margin-top: 12px;
+        .np-dialog-body {
+            padding: 0 20px;
         }
-        .np-proceed-wrap.visible { display: block; }
-        .np-proceed-btn {
-            width: 100%;
-            padding: 10px 0;
+        .np-option-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .np-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
             border-radius: 6px;
-            border: 1px solid #d1d5db;
-            background: #ffffff;
-            color: #4b5563;
+            cursor: pointer;
+            transition: background 0.12s;
+            border: 1px solid transparent;
+        }
+        .np-option:hover {
+            background: #f1f3f4;
+        }
+        .np-option.selected {
+            background: #e8f0fe;
+            border-color: #d2e3fc;
+        }
+        .np-option-radio {
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            border: 2px solid #80868b;
+            position: relative;
+            flex-shrink: 0;
+            transition: border-color 0.12s;
+        }
+        .np-option.selected .np-option-radio {
+            border-color: #1a73e8;
+        }
+        .np-option.selected .np-option-radio::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #1a73e8;
+        }
+        .np-option-icon {
+            width: 20px; height: 20px;
+            flex-shrink: 0;
+            fill: #5f6368;
+        }
+        .np-option-text {
+            flex: 1;
+        }
+        .np-option-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #202124;
+        }
+        .np-option-desc {
+            font-size: 11px;
+            color: #80868b;
+            margin-top: 1px;
+        }
+        .np-dialog-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 16px 20px;
+            margin-top: 8px;
+        }
+        .np-dialog-btn {
+            padding: 7px 20px;
+            border-radius: 4px;
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            border: none;
+            transition: background 0.12s, box-shadow 0.12s;
+            letter-spacing: 0.2px;
         }
-        .np-proceed-btn:hover {
-            background: #f3f4f6;
-            color: #111827;
-            border-color: #9ca3af;
+        .np-btn-cancel {
+            background: #fff;
+            color: #1a73e8;
+            border: 1px solid #dadce0;
+        }
+        .np-btn-cancel:hover {
+            background: #f6fafe;
+            border-color: #d2e3fc;
+        }
+        .np-btn-share {
+            background: #1a73e8;
+            color: #fff;
+        }
+        .np-btn-share:hover {
+            background: #1765cc;
+            box-shadow: 0 1px 3px rgba(26,115,232,0.3);
+        }
+        .np-btn-share:disabled {
+            background: #dadce0;
+            color: #80868b;
+            cursor: default;
+            box-shadow: none;
+        }
+        .np-separator {
+            height: 1px;
+            background: #e8eaed;
+            margin: 4px 0;
+        }
+        .np-hint {
+            font-size: 11px;
+            color: #80868b;
+            padding: 0 20px 4px;
+            margin-top: 8px;
         }
     `;
     shadow.appendChild(styles);
 
+    const backdrop = document.createElement('div');
+    backdrop.className = 'np-backdrop';
+    shadow.appendChild(backdrop);
+
     const root = document.createElement('div');
     root.className = 'np-root';
     root.innerHTML = `
-        <div class="np-toast">
-            <div class="np-header">
-                <div class="np-title">NeoPass Extension</div>
-                <button type="button" class="np-close">×</button>
+        <div class="np-dialog">
+            <div class="np-dialog-header">
+                <div class="np-dialog-title">Choose what to share</div>
+                <div class="np-dialog-origin">${origin} wants to share your screen</div>
             </div>
-            <div class="np-status">FullScreen ScreenShare Bypassed!</div>
-            <div class="np-info">
-                Now you can share <span class="hl">only the tab</span>, <span class="hl">only the Chrome window</span>,<br>
-                or a <span class="hl">blank screen</span> instead of the entire screen.<br>
-                You can also <span class="hl">freeze</span> your screen at a single frame.<br>
-                Use <span class="hl">Alt+Shift+F</span> to toggle freeze/unfreeze during proctoring.
+            <div class="np-dialog-body">
+                <ul class="np-option-list">
+                    <li class="np-option selected" data-mode="tab">
+                        <span class="np-option-radio"></span>
+                        <svg class="np-option-icon" viewBox="0 0 24 24"><path d="M19 4H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zm0 14H5V8h14v10z"/></svg>
+                        <div class="np-option-text">
+                            <div class="np-option-label">Tab or Window</div>
+                            <div class="np-option-desc">Shares only this tab or window, not full screen</div>
+                        </div>
+                    </li>
+                    <li class="np-option" data-mode="blank">
+                        <span class="np-option-radio"></span>
+                        <svg class="np-option-icon" viewBox="0 0 24 24"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H3V5h18v14zM9 8l7 4-7 4V8z"/></svg>
+                        <div class="np-option-text">
+                            <div class="np-option-label">Screen Recording</div>
+                            <div class="np-option-desc">Shares a blank screen — nothing is actually captured</div>
+                        </div>
+                    </li>
+                    <div class="np-separator"></div>
+                    <li class="np-option" data-mode="freeze">
+                        <span class="np-option-radio"></span>
+                        <svg class="np-option-icon" viewBox="0 0 24 24"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H3V5h18v14z"/></svg>
+                        <div class="np-option-text">
+                            <div class="np-option-label">Entire Screen</div>
+                            <div class="np-option-desc">Freezes on a single frame — toggle with Alt+Shift+F</div>
+                        </div>
+                    </li>
+                </ul>
             </div>
-            <div class="np-btn-row">
-                <div class="np-btn-wrap">
-                    <div class="np-glow np-glow-orange" aria-hidden="true"></div>
-                    <button type="button" class="np-btn ok-btn">Share Tab/Window</button>
-                </div>
-                <div class="np-btn-wrap">
-                    <div class="np-glow np-glow-green" aria-hidden="true"></div>
-                    <button type="button" class="np-btn blank-btn">Share Blank Screen</button>
-                </div>
-                <div class="np-btn-wrap">
-                    <div class="np-glow np-glow-purple" aria-hidden="true"></div>
-                    <button type="button" class="np-btn freeze-btn">Share Frozen Screen</button>
-                </div>
+            <div class="np-hint">Shared content is visible to the requesting site only</div>
+            <div class="np-dialog-footer">
+                <button type="button" class="np-dialog-btn np-btn-cancel">Cancel</button>
+                <button type="button" class="np-dialog-btn np-btn-share">Share</button>
             </div>
         </div>
     `;
     shadow.appendChild(root);
 
 
-    const closeBtn = root.querySelector('.np-close');
-    const okBtn = root.querySelector('.ok-btn');
-    const blankBtn = root.querySelector('.blank-btn');
-    const freezeBtn = root.querySelector('.freeze-btn');
+    const options = root.querySelectorAll('.np-option');
+    const cancelBtn = root.querySelector('.np-btn-cancel');
+    const shareBtn = root.querySelector('.np-btn-share');
+    let selectedMode = 'tab';
 
+    options.forEach(opt => {
+        opt.addEventListener('click', () => {
+            options.forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            selectedMode = opt.dataset.mode;
+        });
+    });
 
     const cleanup = () => {
-        root.style.animation = 'fadeOut 0.3s ease-out';
-        setTimeout(() => host.remove(), 280);
+        backdrop.style.animation = 'fadeOut 0.15s ease';
+        root.style.animation = 'fadeOut 0.15s ease';
+        setTimeout(() => host.remove(), 140);
     };
 
-    closeBtn.onclick = () => {
+    cancelBtn.onclick = () => {
         cleanup();
         reject(new Error('Screen share cancelled by user'));
     };
 
+    backdrop.onclick = () => {
+        cleanup();
+        reject(new Error('Screen share cancelled by user'));
+    };
 
-    okBtn.onclick = async () => {
+    shareBtn.onclick = async () => {
+        if (selectedMode === 'tab') return handleTab();
+        if (selectedMode === 'blank') return handleBlank();
+        if (selectedMode === 'freeze') return handleFreeze();
+    };
+
+    const handleTab = async () => {
         cleanup();
         try {
             if (isMac) {
@@ -386,7 +423,7 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
         }
     };
 
-    blankBtn.onclick = () => {
+    const handleBlank = () => {
         cleanup();
         try {
             const canvas = document.createElement('canvas');
@@ -420,7 +457,7 @@ function showPopup(resolve, reject, constraints, originalGetDisplayMedia) {
         }
     };
 
-    freezeBtn.onclick = async () => {
+    const handleFreeze = async () => {
         cleanup();
         const chatElements = [
             document.getElementById('chat-overlay-shadow-host'),
