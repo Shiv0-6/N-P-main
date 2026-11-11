@@ -30,6 +30,7 @@ This chrome extension is for students taking tests on the **`Iamneo portal`**, *
   - **Share Tab/Window** — share only the current tab or window instead of the entire screen
   - **Share Blank Screen** — share a black screen without capturing anything real
   - **Share Frozen Screen** — capture a single frame of your screen and freeze it
+  - **Toggle Freeze/Unfreeze** — press Alt+Shift+F to switch between frozen and live during proctoring, with optional auto-refresh timer
 
 ## ⬇️ Installation
 
@@ -60,6 +61,7 @@ This chrome extension is for students taking tests on the **`Iamneo portal`**, *
 > - <kbd>Alt</kbd> + <kbd>Comma [,]</kbd> : Solve NPTEL MCQs from selected text
 > - <kbd>Ctrl</kbd> + <kbd>Period [.]</kbd> : Search answers and code from selected text
 > - <kbd>Ctrl</kbd> + <kbd>Comma [,]</kbd> : Search MCQs from selected text
+- <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> : Toggle freeze/unfreeze screen share during proctoring
 - <kbd>Alt</kbd> + <kbd>P</kbd> : Paste using drag and drop when blocked
 - <kbd>Ctrl</kbd> + <kbd>V</kbd> : Paste content when blocked
 - <kbd>Alt</kbd> + <kbd>C</kbd> : Open/Close Chatbot
@@ -77,6 +79,7 @@ This chrome extension is for students taking tests on the **`Iamneo portal`**, *
 > - <kbd>Control</kbd> + <kbd>Period [.]</kbd> : Search answers and code from selected text
 > - <kbd>Control</kbd> + <kbd>Comma [,]</kbd> : Search MCQs from selected text
 
+- <kbd>Option</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> : Toggle freeze/unfreeze screen share during proctoring
 - <kbd>Option</kbd> + <kbd>P</kbd> : Paste using drag and drop when blocked
 - <kbd>Cmd</kbd> + <kbd>V</kbd> : Paste content when blocked
 - <kbd>Option</kbd> + <kbd>C</kbd> : Open/Close Chatbot
