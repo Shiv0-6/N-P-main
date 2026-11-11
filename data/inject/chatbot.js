@@ -834,7 +834,7 @@ if (typeof window.isMac === 'undefined') {
                 Chat
             </span>
             <span style="font-size: 12px !important; font-weight: 500 !important; color: #777 !important; margin-left: 30px !important;">
-                ${window.isMac ? 'Option+C' : 'Alt+C'} to toggle
+                ${window.isMac ? 'Option+C' : 'Alt+C'} to toggle &bull; ${window.isMac ? 'Option+Shift+C' : 'Alt+Shift+C'} to hide
             </span>
         </div>
         <div style="display: flex !important; gap: 14px !important; align-items: center !important;">
@@ -2841,8 +2841,19 @@ if (typeof window.isMac === 'undefined') {
 
             // Toggle chat with Alt+C (Option+C on macOS).
             if (modifierKey && !e.ctrlKey && !e.shiftKey && !e.metaKey && e.code === "KeyC") {
-                e.preventDefault(); // Prevent default browser behavior
+                e.preventDefault();
                 toggleChatOverlay();
+            }
+
+            // Hide/unhide entire chatbot with Alt+Shift+C (Option+Shift+C on macOS).
+            if (modifierKey && e.shiftKey && !e.ctrlKey && !e.metaKey && e.code === "KeyC") {
+                e.preventDefault();
+                const overlayHost = document.getElementById('chat-overlay-shadow-host');
+                const buttonHost = document.getElementById('chat-button-shadow-host');
+                const isHidden = (overlayHost && overlayHost.style.display === 'none') ||
+                                 (buttonHost && buttonHost.style.display === 'none');
+                if (overlayHost) overlayHost.style.display = isHidden ? '' : 'none';
+                if (buttonHost) buttonHost.style.display = isHidden ? '' : 'none';
             }
 
             // Close chat with Escape

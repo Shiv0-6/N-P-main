@@ -65,6 +65,7 @@ This chrome extension is for students taking tests on the **`Iamneo portal`**, *
 - <kbd>Alt</kbd> + <kbd>P</kbd> : Paste using drag and drop when blocked
 - <kbd>Ctrl</kbd> + <kbd>V</kbd> : Paste content when blocked
 - <kbd>Alt</kbd> + <kbd>C</kbd> : Open/Close Chatbot
+- <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> : Hide/Unhide Chatbot completely
 
 <details>
 <summary><strong>Mac Users (Click to expand)</strong></summary>
@@ -83,6 +84,7 @@ This chrome extension is for students taking tests on the **`Iamneo portal`**, *
 - <kbd>Option</kbd> + <kbd>P</kbd> : Paste using drag and drop when blocked
 - <kbd>Cmd</kbd> + <kbd>V</kbd> : Paste content when blocked
 - <kbd>Option</kbd> + <kbd>C</kbd> : Open/Close Chatbot
+- <kbd>Option</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> : Hide/Unhide Chatbot completely
 
 </details>
 
